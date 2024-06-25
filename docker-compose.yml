@@ -40,9 +40,9 @@ services:
   # creation of pdf service
   critik-v_converter:
     image: critik-v_converter
-    container_name: critik-v_converter 
+    container_name: critik-v_converter
     build:
-      context: ./Critik-V-converter
+      context: ./go-pdfToJpeg
     ports:
       - "5001:5001"
     volumes:
