@@ -1,1 +1,77 @@
-# final docker compose file
+services:
+  db_critik:
+    image: postgres:latest
+    container_name: db_critik
+
+    env_file: ./Critik-V-server/server/.env
+    ports:
+      - "5432:5432"
+    networks:
+      - critik_network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U admin -d DB -h localhost -p 5432 -t 5 -q 1>/dev/null 2>&1 || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 0
+    volumes:
+      - db_critik_data:/var/lib/postgresql/data
+
+  # creation of backend
+  critik-v_server:
+    image: critik-v_server
+    container_name: critik-v_server
+    build:
+      context: ./Critik-V-server/server
+    ports:
+      - "5000:5000"
+    depends_on:
+      db_critik:
+        condition: service_healthy
+    volumes:
+      - resumes_pdf:/app/resumes
+      - resumes_images:/app/resumes/images
+    networks:
+      - critik_network
+
+  # creation of pdf service
+  critik-v_converter:
+    image: critik-v_converter
+    container_name: critik-v_converter 
+    build:
+      context: ./Critik-V-converter
+    ports:
+      - "5001:5001"
+    volumes:
+      - resumes_pdf:/pdf
+      - resumes_images:/images
+    networks:
+      - critik_network
+
+  # creation of client
+  critik-v_client:
+    image: critik-v_client
+    container_name: critik-v_client
+    depends_on:
+      - critik-v_server
+    build:
+      context: ./Critik-V-client
+    ports:
+      - "80:80"
+    networks:
+      - critik_network
+
+# networking configuration
+networks:
+  critik_network:
+    driver: bridge
+volumes:
+  db_critik_data:
+    driver: local
+  resumes_images:
+    driver: local
+  resumes_pdf:
+    driver: local
