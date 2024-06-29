@@ -35,7 +35,7 @@ services:
       - resumes_pdf:/app/resumes
       - resumes_images:/app/resumes/images
     networks:
-      - critik_network
+      - critik-v_network
 
   # creation of pdf service
   critik-v_converter:
@@ -49,7 +49,7 @@ services:
       - resumes_pdf:/pdf
       - resumes_images:/images
     networks:
-      - critik_network
+      - critik-v_network
 
   # creation of client
   critik-v_client:
