@@ -7,7 +7,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - critik_network
+      - critik-v_network
     healthcheck:
       test:
         [
