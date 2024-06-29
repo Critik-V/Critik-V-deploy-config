@@ -62,7 +62,7 @@ services:
     ports:
       - "80:80"
     networks:
-      - critik_network
+      - critik-v_network
 
 # networking configuration
 networks:
